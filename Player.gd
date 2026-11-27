@@ -1,8 +1,9 @@
 extends CharacterBody3D
 
 const SPEED = 10.0
-const JUMP_VELOCITY = 5
+const JUMP_VELOCITY = 5.0
 @onready var pivot: Node3D = $Node3D
+@onready var footstep_player: AudioStreamPlayer3D = $FootstepPlayer
 @export var sensitivity = 0.25
 var is_mouse_input_enabled = true
 
@@ -15,9 +16,8 @@ func _input(event):
 		pivot.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
 		pivot.rotation.x = clamp(pivot.rotation.x, deg_to_rad(-90), deg_to_rad(45))
 		
-		
 func _physics_process(delta: float) -> void:
-	if Input.is_action_pressed("ui_accept"):
+	if Input.is_action_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 	
 	var direction = Vector3.ZERO 
@@ -36,10 +36,35 @@ func _physics_process(delta: float) -> void:
 	velocity.x = direction.x * SPEED
 	velocity.z = direction.z * SPEED
 
-	if Input.is_key_pressed(KEY_SHIFT):
+	var is_sprinting = Input.is_key_pressed(KEY_SHIFT)
+	if is_sprinting:
 		velocity.x *= 2
 		velocity.z *= 2
 
 	velocity.y -= 9.8 * delta * 2
 
 	move_and_slide()
+
+	_handle_movement_audio(direction, is_sprinting)
+
+func _handle_movement_audio(direction: Vector3, is_sprinting: bool) -> void:
+	if not footstep_player:
+		return
+
+	# Only play footsteps when actively moving along the ground
+	var is_moving = direction.length_squared() > 0.001 and is_on_floor()
+
+	if is_moving:
+		# Pitch scale: normal walk = 1.0, sprint = 1.35 (faster pace)
+		footstep_player.pitch_scale = 1.35 if is_sprinting else 1.0
+		
+		# Resume if paused or start playing if stopped, without resetting position
+		if footstep_player.stream_paused:
+			footstep_player.stream_paused = false
+		elif not footstep_player.playing:
+			footstep_player.play()
+	else:
+		# Pause playback so it stops instantly and resumes seamlessly from where it left off
+		if footstep_player.playing and not footstep_player.stream_paused:
+			footstep_player.stream_paused = true
+

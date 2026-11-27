@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dop3i0ors6kmm"]
+[gd_scene load_steps=5 format=3 uid="uid://dop3i0ors6kmm"]
 
 [ext_resource type="Script" uid="uid://n3237uww7thk" path="res://Player.gd" id="1_xhfnw"]
+[ext_resource type="AudioStream" uid="uid://b5xevfqym610p" path="res://assets/freesound_community-footsteps-75638.mp3" id="2_footsteps"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sh265"]
 
@@ -23,3 +24,7 @@ spring_length = 5.0
 
 [node name="Camera3D" type="Camera3D" parent="Node3D/SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.79572)
+
+[node name="FootstepPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_footsteps")
+
