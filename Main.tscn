@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0grl6tdrab08"]
+[gd_scene load_steps=8 format=3 uid="uid://d0grl6tdrab08"]
 
 [ext_resource type="Script" uid="uid://64ee4kogyt82" path="res://ChunkManager.gd" id="1_glv2v"]
 [ext_resource type="PackedScene" uid="uid://cwhpy8mwx2xao" path="res://Chunk.tscn" id="2_r0du0"]
 [ext_resource type="PackedScene" uid="uid://dop3i0ors6kmm" path="res://Player.tscn" id="2_uu6xs"]
+[ext_resource type="PackedScene" path="res://NarrativeTutorial.tscn" id="4_tut"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r0du0"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -38,3 +39,7 @@ overall_scale = 2.0
 
 [node name="Player" parent="." instance=ExtResource("2_uu6xs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 44.3204, 0)
+
+[node name="NarrativeTutorial" parent="." node_paths=PackedStringArray("player", "sun_light") instance=ExtResource("4_tut")]
+player = NodePath("../Player")
+sun_light = NodePath("../DirectionalLight3D")
