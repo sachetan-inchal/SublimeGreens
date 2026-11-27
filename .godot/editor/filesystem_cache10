@@ -1,0 +1,12 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1795766390
+Chunk.gd::GDScript::525046145230975312::1795696907::0::1::::<>Node3D<><>0<>0<><>::
+Chunk.gdshader::Shader::3485464298024504756::1795696907::0::1::::<><><>0<>0<><>::
+Chunk.tscn::PackedScene::6332401938486158066::1795696907::0::1::::<><><>0<>0<><>::uid://hqloy5qy3o61::::res://Chunk.gd<>uid://bwosdgwpjqfgo::::res://grass.gdshader<>uid://bpwnc8pfgalf5::::res://Chunk.gdshader
+ChunkManager.gd::GDScript::2235972658063701545::1795696907::0::1::::<>Node3D<><>0<>0<><>::
+grass.gdshader::Shader::3960575145358152670::1795696907::0::1::::<><><>0<>0<><>::
+icon.svg::CompressedTexture2D::8529986561154263982::1795696907::1795766392::1::::<><><>0<>0<>d26159cdce01fba1c3c23dbed5eb6b88<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
+Main.tscn::PackedScene::8927422898898619559::1795696907::0::1::::<><><>0<>0<><>::uid://64ee4kogyt82::::res://ChunkManager.gd<>uid://cwhpy8mwx2xao::::res://Chunk.tscn<>uid://dop3i0ors6kmm::::res://Player.tscn
+Player.gd::GDScript::971948618115677924::1795696907::0::1::::<>CharacterBody3D<><>0<>0<><>::
+Player.tscn::PackedScene::8174587225980055428::1795696907::0::1::::<><><>0<>0<><>::uid://n3237uww7thk::::res://Player.gd
+README.md::TextFile::-1::1795696907::0::1::::<><><>0<>0<><>::
