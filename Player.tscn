@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dop3i0ors6kmm"]
 
 [ext_resource type="Script" uid="uid://n3237uww7thk" path="res://Player.gd" id="1_xhfnw"]
-[ext_resource type="AudioStream" uid="uid://b5xevfqym610p" path="res://assets/freesound_community-footsteps-75638.mp3" id="2_footsteps"]
+[ext_resource type="AudioStream" path="res://assets/freesound_community-footsteps-75638.mp3" id="2_footsteps"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sh265"]
 

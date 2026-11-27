@@ -1,0 +1,111 @@
+[gd_scene load_steps=12 format=3 uid="uid://c3f0b2r8n9m4q"]
+
+[ext_resource type="Script" path="res://TransformDemoObject.gd" id="1_td8x"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_area"]
+height = 3.5
+radius = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pedestal"]
+albedo_color = Color(0.18, 0.2, 0.25, 1)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pedestal"]
+material = SubResource("StandardMaterial3D_pedestal")
+top_radius = 1.0
+bottom_radius = 1.2
+height = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cube"]
+transparency = 1
+albedo_color = Color(0.75, 0.2, 0.95, 0.75)
+emission_enabled = true
+emission = Color(0.65, 0.15, 0.9, 1)
+emission_energy_multiplier = 1.8
+metallic = 0.2
+roughness = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_cube"]
+material = SubResource("StandardMaterial3D_cube")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axis_x"]
+albedo_color = Color(1, 0.15, 0.15, 1)
+emission_enabled = true
+emission = Color(1, 0.15, 0.15, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_axis"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 1.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axis_y"]
+albedo_color = Color(0.2, 1, 0.2, 1)
+emission_enabled = true
+emission = Color(0.2, 1, 0.2, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axis_z"]
+albedo_color = Color(0.2, 0.4, 1, 1)
+emission_enabled = true
+emission = Color(0.2, 0.4, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ghost"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.25)
+roughness = 0.8
+
+[node name="TransformDemoObject" type="Node3D"]
+script = ExtResource("1_td8x")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+shape = SubResource("CylinderShape3D_area")
+
+[node name="Pedestal" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("CylinderMesh_pedestal")
+
+[node name="GhostMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+visible = false
+material_override = SubResource("StandardMaterial3D_ghost")
+mesh = SubResource("BoxMesh_cube")
+
+[node name="CubePivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="CubeMesh" type="MeshInstance3D" parent="CubePivot"]
+mesh = SubResource("BoxMesh_cube")
+
+[node name="AxisX" type="MeshInstance3D" parent="CubePivot"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.8, 0, 0)
+material_override = SubResource("StandardMaterial3D_axis_x")
+mesh = SubResource("CylinderMesh_axis")
+
+[node name="AxisY" type="MeshInstance3D" parent="CubePivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+material_override = SubResource("StandardMaterial3D_axis_y")
+mesh = SubResource("CylinderMesh_axis")
+
+[node name="AxisZ" type="MeshInstance3D" parent="CubePivot"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.8)
+material_override = SubResource("StandardMaterial3D_axis_z")
+mesh = SubResource("CylinderMesh_axis")
+
+[node name="PromptLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+billboard = 1
+double_sided = false
+text = "Press [E] to Run Transformation Demo"
+font_size = 26
+outline_size = 6
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+light_color = Color(0.8, 0.3, 1, 1)
+light_energy = 2.0
+omni_range = 6.0

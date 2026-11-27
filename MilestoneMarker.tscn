@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://c6j2kqlb7i8xm"]
 
-[ext_resource type="Script" uid="uid://dm0h5t41q2bvi" path="res://MilestoneMarker.gd" id="1_marker"]
+[ext_resource type="Script" path="res://MilestoneMarker.gd" id="1_marker"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_shape"]
 height = 3.0

@@ -1,0 +1,294 @@
+[gd_scene load_steps=6 format=3 uid="uid://cx6y8v7u5k2o1"]
+
+[ext_resource type="Script" path="res://TutorialFormulaPanel.gd" id="1_fp8x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.0823529, 0.0980392, 0.12549, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.36, 0.44, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+bg_color = Color(0.141176, 0.176471, 0.235294, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.38, 0.5, 1)
+expand_margin_left = 4.0
+expand_margin_top = 1.0
+expand_margin_right = 4.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.109804, 0.129412, 0.164706, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.28, 0.35, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diagram"]
+bg_color = Color(0.05, 0.06, 0.08, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.3, 0.38, 1)
+
+[node name="TutorialFormulaPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_fp8x")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="UnitTag" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Header/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 9
+theme_override_styles/normal = SubResource("StyleBoxFlat_badge")
+text = "UNIT I: PRIMITIVES"
+
+[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/Header/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="TechBadge" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Header/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.68, 0.8, 1)
+theme_override_font_sizes/font_size = 9
+text = "TECHNICAL SPEC"
+
+[node name="ConceptTitle" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "TRIANGULAR MESH GENERATION"
+autowrap_mode = 2
+
+[node name="HSeparator1" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+horizontal_scroll_mode = 0
+
+[node name="ContentVBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="MathBox" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/MathBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/MathBox/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/MathBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 9
+text = "EQUATION / FORMULA"
+
+[node name="MathContent" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/MathBox/Margin/VBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.88, 0.92, 0.98, 1)
+theme_override_font_sizes/normal_font_size = 9
+bbcode_enabled = true
+text = "T1 = (V0, V1, V3)
+T2 = (V1, V2, V3)"
+fit_content = true
+scroll_active = false
+
+[node name="DiagramBox" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_diagram")
+
+[node name="Margin" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/DiagramBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/DiagramBox/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/DiagramBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.75, 0.35, 1)
+theme_override_font_sizes/font_size = 9
+text = "GEOMETRIC DIAGRAM"
+
+[node name="DiagramContent" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/DiagramBox/Margin/VBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.8, 0.88, 0.95, 1)
+theme_override_font_sizes/normal_font_size = 9
+bbcode_enabled = true
+text = "[code]Diagram visualization[/code]"
+fit_content = true
+scroll_active = false
+
+[node name="VarsBox" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/VarsBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/VarsBox/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/VarsBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.9, 0.65, 1)
+theme_override_font_sizes/font_size = 9
+text = "VARIABLE DEFINITIONS"
+
+[node name="VarsContent" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/VarsBox/Margin/VBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.82, 0.88, 0.95, 1)
+theme_override_font_sizes/normal_font_size = 9
+bbcode_enabled = true
+text = "V0..V3: 3D Vertex Coordinates"
+fit_content = true
+scroll_active = false
+
+[node name="CodeBox" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/CodeBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/CodeBox/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/CodeBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.65, 1, 1)
+theme_override_font_sizes/font_size = 9
+text = "CODE IMPLEMENTATION"
+
+[node name="FileLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/CodeBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 0.98, 1)
+theme_override_font_sizes/font_size = 9
+text = "📁 Chunk.gd"
+
+[node name="FuncLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/CodeBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "⚙️ _create_grass_blade_mesh()"
+
+[node name="TypeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ContentVBox/CodeBox/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.85, 0.7, 1)
+theme_override_font_sizes/font_size = 9
+text = "📌 Implemented Directly"
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="StatusContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="StatusLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/StatusContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 9
+text = "● STATUS: Waiting for player..."
+
+[node name="ProgressBar" type="ProgressBar" parent="PanelContainer/MarginContainer/VBoxContainer/StatusContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+mouse_filter = 2
+show_percentage = false

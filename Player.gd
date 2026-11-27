@@ -15,10 +15,24 @@ func _input(event):
 	if quiz_ui and quiz_ui.is_quiz_open:
 		return
 
-	if event is InputEventMouseMotion:
+	# Toggle mouse mode between Look (Captured) and Cursor (Visible)
+	if event is InputEventKey and event.is_pressed() and not event.echo:
+		if event.keycode == KEY_TAB or event.keycode == KEY_ALT or event.keycode == KEY_QUOTELEFT:
+			toggle_mouse_mode()
+			get_viewport().set_input_as_handled()
+			return
+
+	# Only rotate camera when mouse is captured
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(deg_to_rad(-event.relative.x * sensitivity))
 		pivot.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
 		pivot.rotation.x = clamp(pivot.rotation.x, deg_to_rad(-90), deg_to_rad(45))
+
+func toggle_mouse_mode() -> void:
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		
 func _physics_process(delta: float) -> void:
 	var quiz_ui = get_tree().root.find_child("QuizUI", true, false)

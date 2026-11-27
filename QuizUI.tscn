@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://b82e4f0y6w11q"]
+[gd_scene load_steps=3 format=3 uid="uid://b82e4f0y6w11q"]
 
-[ext_resource type="Script" uid="uid://b5m3x32014yvq" path="res://QuizUI.gd" id="1_quizui"]
+[ext_resource type="Script" path="res://QuizUI.gd" id="1_quizui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_panel"]
+bg_color = Color(0.0823529, 0.0980392, 0.12549, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.36, 0.44, 1)
 
 [node name="QuizUI" type="CanvasLayer"]
 process_mode = 3
@@ -12,36 +20,37 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -240.0
-offset_right = 340.0
-offset_bottom = 240.0
+offset_left = -280.0
+offset_top = -200.0
+offset_right = 280.0
+offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 18.0
-offset_right = -20.0
-offset_bottom = -18.0
+offset_left = 16.0
+offset_top = 14.0
+offset_right = -16.0
+offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 13
 text = "Milestone: Concept Name"
 horizontal_alignment = 1
 
 [node name="SyllabusLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.4, 0.75, 1, 1)
+theme_override_font_sizes/font_size = 10
 text = "Syllabus: Unit ..."
 horizontal_alignment = 1
 
@@ -50,21 +59,23 @@ layout_mode = 2
 
 [node name="QuestionLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 11
 text = "Question text will appear here?"
 autowrap_mode = 3
 
 [node name="OptionsContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="FeedbackLabel" type="Label" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 autowrap_mode = 3
 
 [node name="CloseButton" type="Button" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
+theme_override_font_sizes/font_size = 10
 text = "Close (or press E / Esc)"
