@@ -9,7 +9,12 @@ enum Stage {
 	STAGE_2_MOVEMENT = 2,
 	STAGE_3_SUN_SEEK = 3,
 	STAGE_4_SUN_FOUND = 4,
-	STAGE_5_COMPLETION = 5
+	STAGE_5_PRIMITIVES_TRIANGLES = 5,
+	STAGE_6_SHADERS_WIND = 6,
+	STAGE_7_MULTIMESH_BATCHING = 7,
+	STAGE_8_TRANSFORMS_CAMERA = 8,
+	STAGE_9_CULLING_PHYSICS = 9,
+	STAGE_10_COMPLETION = 10
 }
 
 const SAVE_PATH: String = "user://tutorial.cfg"
@@ -130,8 +135,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			restart_tutorial()
 			return
 			
-	# In Stage 5, allow Enter or Space to also confirm Continue Exploring
-	if current_stage == Stage.STAGE_5_COMPLETION and is_active:
+	# In Stage 10, allow Enter or Space to also confirm Continue Exploring
+	if current_stage == Stage.STAGE_10_COMPLETION and is_active:
+		if event is InputEventKey and event.pressed and not event.echo:
+			if event.keycode == KEY_SPACE or event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER:
+				_on_action_button_pressed()
+				get_viewport().set_input_as_handled()
+	elif is_active and action_button.visible:
 		if event is InputEventKey and event.pressed and not event.echo:
 			if event.keycode == KEY_SPACE or event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER:
 				_on_action_button_pressed()
@@ -150,27 +160,37 @@ func set_stage(new_stage: Stage) -> void:
 			_setup_stage_3()
 		Stage.STAGE_4_SUN_FOUND:
 			_setup_stage_4()
-		Stage.STAGE_5_COMPLETION:
+		Stage.STAGE_5_PRIMITIVES_TRIANGLES:
 			_setup_stage_5()
+		Stage.STAGE_6_SHADERS_WIND:
+			_setup_stage_6()
+		Stage.STAGE_7_MULTIMESH_BATCHING:
+			_setup_stage_7()
+		Stage.STAGE_8_TRANSFORMS_CAMERA:
+			_setup_stage_8()
+		Stage.STAGE_9_CULLING_PHYSICS:
+			_setup_stage_9()
+		Stage.STAGE_10_COMPLETION:
+			_setup_stage_10()
 		Stage.INACTIVE:
 			_finish_tutorial()
 
 func _setup_stage_1() -> void:
-	badge_label.text = "TUTORIAL"
+	badge_label.text = "INTRODUCTION"
 	badge_label.modulate = Color(0.35, 0.75, 1.0)
-	step_label.text = "Step 1 of 5"
+	step_label.text = "Step 1 of 10"
 	progress_bar.visible = false
 	action_button.visible = false
 	hint_label.visible = false
 	
 	stage_1_timer = 0.0
-	var text = "Welcome, Explorer! Before we begin, let's discover how to navigate this 3D world. Use the W, A, S and D keys to move around. You can also move your mouse to look around your surroundings."
+	var text = "Welcome to our CGVR Project Tutorial! Instead of studying computer graphics concepts only through equations, we have implemented them in this interactive 3D procedural world."
 	_display_message(text)
 
 func _setup_stage_2() -> void:
-	badge_label.text = "EXPLORATION"
+	badge_label.text = "UNIT II: INPUT & NAVIGATION"
 	badge_label.modulate = Color(0.4, 0.9, 0.6)
-	step_label.text = "Step 2 of 5"
+	step_label.text = "Step 2 of 10"
 	progress_bar.visible = false
 	action_button.visible = false
 	
@@ -179,15 +199,15 @@ func _setup_stage_2() -> void:
 	accumulated_distance = 0.0
 	
 	hint_label.visible = true
-	hint_label.text = "Walk around to get familiar with navigation"
+	hint_label.text = "Move with W, A, S, D and rotate your view using mouse motion"
 	
-	var text = "Great! Try moving around using W, A, S and D. Explore your surroundings and get comfortable navigating this world."
+	var text = "Unit II (Input Devices & Events): Physical input from your keyboard triggers translation, while mouse motion provides continuous relative measure for camera rotation."
 	_display_message(text)
 
 func _setup_stage_3() -> void:
-	badge_label.text = "DISCOVERY"
+	badge_label.text = "LIGHTING & VIEWING"
 	badge_label.modulate = Color(1.0, 0.82, 0.35)
-	step_label.text = "Step 3 of 5"
+	step_label.text = "Step 3 of 10"
 	
 	sun_gaze_time = 0.0
 	progress_bar.visible = true
@@ -197,34 +217,94 @@ func _setup_stage_3() -> void:
 	hint_label.visible = true
 	hint_label.text = "Look up into the sky and face the glowing Sun"
 	
-	var text = "Now, look towards the sky! Move your mouse upwards and explore what is above you. Can you spot the Sun?"
+	var text = "Now, look towards the sky! Move your mouse upwards to orient the viewing vector. Can you spot the Directional Light illuminating the world?"
 	_display_message(text)
 
 func _setup_stage_4() -> void:
 	badge_label.text = "LIGHT SOURCE FOUND"
 	badge_label.modulate = Color(1.0, 0.72, 0.2)
-	step_label.text = "Step 4 of 5"
+	step_label.text = "Step 4 of 10"
 	progress_bar.visible = false
-	action_button.visible = false
+	action_button.visible = true
+	action_button.text = "Next: Unit I Primitives [ Space ]"
 	hint_label.visible = false
 	stage_4_timer = 0.0
 	
-	var text = "Well done! You discovered the Sun! It is the light source illuminating our 3D world. Notice how its light brightens the environment and helps us see the objects around us. This is an example of lighting in 3D computer graphics!"
+	var text = "Light Source Located! In 3D graphics, a DirectionalLight3D simulates sun rays using parallel light vectors. Surface normals on our terrain calculate diffuse and specular illumination."
 	_display_message(text)
 
 func _setup_stage_5() -> void:
-	badge_label.text = "COMPLETED"
+	badge_label.text = "UNIT I: PRIMITIVES & MESHES"
+	badge_label.modulate = Color(0.4, 0.8, 1.0)
+	step_label.text = "Step 5 of 10"
+	progress_bar.visible = false
+	action_button.visible = true
+	action_button.text = "Next: Shaders & Wind [ Space ]"
+	hint_label.visible = false
+	
+	var text = "Unit I (Primitives & Polygons): Every object is made of triangles (Mesh.PRIMITIVE_TRIANGLES). Our grass blades are generated procedurally with 4 vertices forming 2 indexed triangles (V0, V1, V3 and V1, V2, V3) via SurfaceTool in Chunk.gd."
+	_display_message(text)
+
+func _setup_stage_6() -> void:
+	badge_label.text = "UNIT I: PROGRAMMABLE SHADERS"
+	badge_label.modulate = Color(0.8, 0.5, 1.0)
+	step_label.text = "Step 6 of 10"
+	progress_bar.visible = false
+	action_button.visible = true
+	action_button.text = "Next: GPU Instancing [ Space ]"
+	hint_label.visible = false
+	
+	var text = "Unit I (Graphics Pipeline): In grass.gdshader, a Vertex Shader displaces vertices using noise. The sway mask S = 1.0 - UV.y keeps the roots pinned (S=0 at UV.y=1) while the tips sway with the wind (S=1 at UV.y=0)."
+	_display_message(text)
+
+func _setup_stage_7() -> void:
+	badge_label.text = "UNIT I: GPU INSTANCING"
+	badge_label.modulate = Color(0.3, 0.9, 0.9)
+	step_label.text = "Step 7 of 10"
+	progress_bar.visible = false
+	action_button.visible = true
+	action_button.text = "Next: Transformations [ Space ]"
+	hint_label.visible = false
+	
+	var text = "Unit I (Display Lists & Batching): Instead of thousands of separate scene nodes, MultiMeshInstance3D packs 3x4 affine transform matrices into a single buffer, rendering over 10,000 grass blades and trees in one GPU draw call."
+	_display_message(text)
+
+func _setup_stage_8() -> void:
+	badge_label.text = "UNIT III & IV: TRANSFORMS & CAMERA"
+	badge_label.modulate = Color(0.9, 0.7, 0.3)
+	step_label.text = "Step 8 of 10"
+	progress_bar.visible = false
+	action_button.visible = true
+	action_button.text = "Next: Visibility & Physics [ Space ]"
+	hint_label.visible = false
+	
+	var text = "Unit III & IV (3D Transforms & Viewing): The viewing pipeline uses a hierarchical rig: Player -> Pivot -> SpringArm3D -> Camera3D. Vertical pitch is clamped between -90 and +45 degrees, avoiding gimbal flipping."
+	_display_message(text)
+
+func _setup_stage_9() -> void:
+	badge_label.text = "UNIT IV & V: CULLING & COLLISION"
+	badge_label.modulate = Color(1.0, 0.4, 0.6)
+	step_label.text = "Step 9 of 10"
+	progress_bar.visible = false
+	action_button.visible = true
+	action_button.text = "Finish Tutorial [ Space ]"
+	hint_label.visible = false
+	
+	var text = "Unit IV & V (Visibility & Physical Modelling): Grass LOD calculates distance to the terrain's Axis-Aligned Bounding Box (AABB) to cull distant blades. Collision detection uses ConcavePolygonShape3D and CapsuleShape3D with move_and_slide()."
+	_display_message(text)
+
+func _setup_stage_10() -> void:
+	badge_label.text = "TUTORIAL COMPLETED"
 	badge_label.modulate = Color(0.5, 0.95, 0.5)
-	step_label.text = "Step 5 of 5"
+	step_label.text = "Step 10 of 10"
 	progress_bar.visible = false
 	hint_label.visible = false
 	
-	# Reveal Continue button and free mouse cursor so it can be clicked easily
 	action_button.visible = true
 	action_button.text = "Continue Exploring  [ Space ]"
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
-	var text = "Excellent work, Explorer! You've learned how to navigate this world and discovered its primary light source. Continue exploring and observe how lighting affects your surroundings. Enjoy your adventure!"
+	var text = "Excellent! You have explored the core CGVR concepts implemented in SublimeGreens. Approach the glowing beacon pedestals and press [E] to test your knowledge with in-game milestone quizzes!"
 	_display_message(text)
 
 func _process(delta: float) -> void:
@@ -253,11 +333,28 @@ func _process(delta: float) -> void:
 					
 		Stage.STAGE_3_SUN_SEEK:
 			_check_sun_detection(delta)
-			
+
+func _on_action_button_pressed() -> void:
+	match current_stage:
 		Stage.STAGE_4_SUN_FOUND:
-			stage_4_timer += delta
-			if stage_4_timer >= STAGE_4_READ_TIME:
-				set_stage(Stage.STAGE_5_COMPLETION)
+			set_stage(Stage.STAGE_5_PRIMITIVES_TRIANGLES)
+		Stage.STAGE_5_PRIMITIVES_TRIANGLES:
+			set_stage(Stage.STAGE_6_SHADERS_WIND)
+		Stage.STAGE_6_SHADERS_WIND:
+			set_stage(Stage.STAGE_7_MULTIMESH_BATCHING)
+		Stage.STAGE_7_MULTIMESH_BATCHING:
+			set_stage(Stage.STAGE_8_TRANSFORMS_CAMERA)
+		Stage.STAGE_8_TRANSFORMS_CAMERA:
+			set_stage(Stage.STAGE_9_CULLING_PHYSICS)
+		Stage.STAGE_9_CULLING_PHYSICS:
+			set_stage(Stage.STAGE_10_COMPLETION)
+		Stage.STAGE_10_COMPLETION:
+			# Dismiss tutorial, save state, and return to game
+			save_completion_state(true)
+			emit_signal("tutorial_completed")
+			_finish_tutorial()
+		_:
+			set_stage((current_stage + 1) as Stage)
 
 func _check_sun_detection(delta: float) -> void:
 	if not sun_light or not camera:
@@ -331,12 +428,6 @@ func _display_message(text: String) -> void:
 		typewriter_tween = create_tween()
 		typewriter_tween.tween_property(message_label, "visible_ratio", 1.0, duration)
 	)
-
-func _on_action_button_pressed() -> void:
-	# Dismiss tutorial, save state, and return to game
-	save_completion_state(true)
-	emit_signal("tutorial_completed")
-	_finish_tutorial()
 
 func _finish_tutorial() -> void:
 	is_active = false
