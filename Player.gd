@@ -11,12 +11,27 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input(event):
+	var quiz_ui = get_tree().root.find_child("QuizUI", true, false)
+	if quiz_ui and quiz_ui.is_quiz_open:
+		return
+
 	if event is InputEventMouseMotion:
 		rotate_y(deg_to_rad(-event.relative.x * sensitivity))
 		pivot.rotate_x(deg_to_rad(-event.relative.y * sensitivity))
 		pivot.rotation.x = clamp(pivot.rotation.x, deg_to_rad(-90), deg_to_rad(45))
 		
 func _physics_process(delta: float) -> void:
+	var quiz_ui = get_tree().root.find_child("QuizUI", true, false)
+	if quiz_ui and quiz_ui.is_quiz_open:
+		velocity.x = 0
+		velocity.z = 0
+		if not is_on_floor():
+			velocity.y -= 9.8 * delta * 2
+		move_and_slide()
+		if footstep_player and footstep_player.playing and not footstep_player.stream_paused:
+			footstep_player.stream_paused = true
+		return
+
 	if Input.is_action_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 	

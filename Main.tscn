@@ -1,9 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://d0grl6tdrab08"]
+[gd_scene load_steps=10 format=3 uid="uid://d0grl6tdrab08"]
 
 [ext_resource type="Script" uid="uid://64ee4kogyt82" path="res://ChunkManager.gd" id="1_glv2v"]
 [ext_resource type="PackedScene" uid="uid://cwhpy8mwx2xao" path="res://Chunk.tscn" id="2_r0du0"]
 [ext_resource type="PackedScene" uid="uid://dop3i0ors6kmm" path="res://Player.tscn" id="2_uu6xs"]
 [ext_resource type="PackedScene" path="res://NarrativeTutorial.tscn" id="4_tut"]
+[ext_resource type="PackedScene" path="res://QuizUI.tscn" id="5_quizui"]
+[ext_resource type="PackedScene" path="res://MilestoneMarker.tscn" id="6_marker"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r0du0"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -43,3 +45,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 44.3204, 0)
 [node name="NarrativeTutorial" parent="." node_paths=PackedStringArray("player", "sun_light") instance=ExtResource("4_tut")]
 player = NodePath("../Player")
 sun_light = NodePath("../DirectionalLight3D")
+
+[node name="QuizUI" parent="." instance=ExtResource("5_quizui")]
+
+[node name="Milestones" type="Node3D" parent="."]
+
+[node name="Milestone_Trees" parent="Milestones" instance=ExtResource("6_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 44.5, -6)
+
+[node name="Milestone_Terrain" parent="Milestones" instance=ExtResource("6_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 44.5, -4)
+milestone_id = "m3_terrain"
+title = "Milestone 2: Terrain Mesh & Surface Normals"
+syllabus_unit = "Unit I & Unit III: Filled Area Primitives, Surface Normals & Shading"
+question = "During procedural terrain generation in generate_terrain(), why are surface normals generated and stored per vertex?"
+options = Array[String](["A) To compute diffuse and specular illumination in the lighting model across mesh surfaces.", "B) To calculate the audio playback volume of footsteps.", "C) Normals are strictly required by the GPU for vertex position translation.", "D) To compress the index buffer size in memory."])
+explanation = "Surface normals define the perpendicular orientation used by shaders and the GPU to calculate light reflection, shading, and slope angles."
+
+[node name="Milestone_MultiMesh" parent="Milestones" instance=ExtResource("6_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 44.5, -14)
+milestone_id = "m5_multimesh"
+title = "Milestone 3: MultiMesh Hardware Instancing"
+syllabus_unit = "Unit I & Unit III: Batching (Display Lists) & 3D Affine Transformations"
+question = "Why does MultiMesh pack a 3x4 transform matrix buffer per instance rather than spawning distinct SceneTree nodes for each tree and grass blade?"
+options = Array[String](["A) It enables GPU hardware instancing, issuing a single draw call with per-instance transform matrices passed to the vertex shader.", "B) Godot cannot handle more than 10 scene nodes in a tree.", "C) It removes the need for vertex shaders entirely.", "D) MultiMesh disables all depth testing to double frame rates."])
+explanation = "Hardware instancing sends instance transformation matrices in a buffer to the GPU, drawing thousands of duplicates in one single draw call with minimal CPU overhead."
