@@ -87,6 +87,19 @@ var chunk_coords: Vector2i = Vector2i.ZERO
 var _grass_blade_mesh: ArrayMesh
 var _tree_mesh: ArrayMesh
 var _sorted_grass_transforms: Array[Transform3D] = [] # <-- NEW
+var _tree_transforms: Array[Transform3D] = [] # Master list of tree transforms
+
+func get_grass_transforms() -> Array[Transform3D]:
+	return _sorted_grass_transforms
+
+func get_tree_transforms() -> Array[Transform3D]:
+	return _tree_transforms
+
+func get_grass_mesh() -> ArrayMesh:
+	return _grass_blade_mesh
+
+func get_tree_mesh() -> ArrayMesh:
+	return _tree_mesh
 
 #=============================================================================
 # --- CORE FUNCTIONS ---
@@ -408,6 +421,8 @@ func generate_trees() -> void:
 		
 		var transform = Transform3D(basis, point_on_triangle)
 		tree_transforms.append(transform)
+
+	_tree_transforms = tree_transforms
 
 	# ... (rest of the function is unchanged) ...
 	if tree_transforms.is_empty(): tree_multimesh.multimesh = null; return

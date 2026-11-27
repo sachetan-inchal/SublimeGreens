@@ -34,6 +34,20 @@ signal tutorial_completed()
 var active_highlight: TutorialHighlight
 var transform_gizmo: TransformDemoObject
 
+# Dedicated individual targets
+var glowing_grass: MeshInstance3D
+var glowing_grass_light: OmniLight3D
+var glowing_grass_base_scale: Vector3 = Vector3.ONE
+
+var glowing_tree: MeshInstance3D
+var glowing_tree_light: OmniLight3D
+var glowing_tree_base_scale: Vector3 = Vector3.ONE
+
+# Font size scaling state (Ctrl +/-)
+var _base_font_sizes: Dictionary = {}
+var _font_size_offset: int = 0
+var font_hint_timer: float = 0.0
+
 # --- State ---
 var current_milestone_idx: int = 1
 var is_active: bool = true
@@ -61,6 +75,7 @@ const SAVE_PATH: String = "user://tutorial_cgvr_progress.cfg"
 
 func _ready() -> void:
 	_resolve_ui_nodes()
+	_init_font_scaling()
 	_init_milestones_data()
 	_resolve_nodes()
 	_setup_ui_events()
@@ -69,6 +84,47 @@ func _ready() -> void:
 	# Load or start milestone 1
 	var saved_idx = _load_progress()
 	set_milestone(saved_idx)
+
+func _init_font_scaling() -> void:
+	_base_font_sizes.clear()
+	_collect_font_nodes(self)
+
+func _collect_font_nodes(root: Node) -> void:
+	for child in root.get_children():
+		if child is RichTextLabel:
+			var sz = child.get_theme_font_size("normal_font_size")
+			if sz <= 0: sz = 9
+			_base_font_sizes[child] = sz
+		elif child is Label:
+			var sz = child.get_theme_font_size("font_size")
+			if sz <= 0: sz = 10
+			_base_font_sizes[child] = sz
+		elif child is Button:
+			var sz = child.get_theme_font_size("font_size")
+			if sz <= 0: sz = 9
+			_base_font_sizes[child] = sz
+		_collect_font_nodes(child)
+
+func _adjust_font_size(delta: int, reset: bool = false) -> void:
+	if reset:
+		_font_size_offset = 0
+	else:
+		_font_size_offset = clamp(_font_size_offset + delta, -2, 8)
+		
+	for node in _base_font_sizes.keys():
+		if not is_instance_valid(node): continue
+		var base_sz = _base_font_sizes[node]
+		var new_sz = max(7, base_sz + _font_size_offset)
+		if node is RichTextLabel:
+			node.add_theme_font_size_override("normal_font_size", new_sz)
+			node.add_theme_font_size_override("bold_font_size", new_sz)
+		else:
+			node.add_theme_font_size_override("font_size", new_sz)
+			
+	if hud_distance_label:
+		var sign_str = "+" if _font_size_offset > 0 else ""
+		hud_distance_label.text = "[ Font: %s%d ]" % [sign_str, _font_size_offset]
+		font_hint_timer = 1.8
 
 func _resolve_ui_nodes() -> void:
 	if not left_panel: left_panel = find_child("LeftPanelContainer", true, false)
@@ -163,6 +219,195 @@ func _setup_world_objects() -> void:
 		transform_gizmo.demo_completed.connect(_on_transform_demo_completed)
 		transform_gizmo.player_interacted.connect(_on_transform_demo_interacted)
 
+	_setup_glowing_grass()
+	_setup_glowing_tree()
+
+func _setup_glowing_grass() -> void:
+	glowing_grass = MeshInstance3D.new()
+	glowing_grass.name = "GlowingGrassBlade"
+	glowing_grass.visible = false
+	
+	var grass_mat = StandardMaterial3D.new()
+	grass_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	grass_mat.albedo_color = Color(0.2, 1.0, 0.85)
+	grass_mat.emission_enabled = true
+	grass_mat.emission = Color(0.1, 1.0, 0.8)
+	grass_mat.emission_energy_multiplier = 5.0
+	grass_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	glowing_grass.material_override = grass_mat
+	
+	glowing_grass_light = OmniLight3D.new()
+	glowing_grass_light.light_color = Color(0.1, 1.0, 0.85)
+	glowing_grass_light.light_energy = 3.0
+	glowing_grass_light.omni_range = 2.5
+	glowing_grass_light.position = Vector3(0, 0.15, 0)
+	glowing_grass.add_child(glowing_grass_light)
+	
+	var lbl = Label3D.new()
+	lbl.text = "✦ TARGET GRASS BLADE"
+	lbl.font_size = 18
+	lbl.outline_size = 4
+	lbl.modulate = Color(0.2, 1.0, 0.85)
+	lbl.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	lbl.position = Vector3(0, 0.45, 0)
+	glowing_grass.add_child(lbl)
+	
+	get_parent().call_deferred("add_child", glowing_grass)
+
+func _setup_glowing_tree() -> void:
+	glowing_tree = MeshInstance3D.new()
+	glowing_tree.name = "GlowingIndividualTree"
+	glowing_tree.visible = false
+	
+	glowing_tree_light = OmniLight3D.new()
+	glowing_tree_light.light_color = Color(0.3, 1.0, 0.5)
+	glowing_tree_light.light_energy = 4.0
+	glowing_tree_light.omni_range = 14.0
+	glowing_tree_light.position = Vector3(0, 2.2, 0)
+	glowing_tree.add_child(glowing_tree_light)
+	
+	var lbl = Label3D.new()
+	lbl.text = "✦ TARGET PROCEDURAL TREE"
+	lbl.font_size = 20
+	lbl.outline_size = 5
+	lbl.modulate = Color(0.3, 1.0, 0.6)
+	lbl.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	lbl.position = Vector3(0, 3.8, 0)
+	glowing_tree.add_child(lbl)
+	
+	get_parent().call_deferred("add_child", glowing_tree)
+
+func _ensure_grass_mesh() -> void:
+	if not glowing_grass: return
+	if glowing_grass.mesh: return
+	
+	var chunk_mgr = get_tree().root.find_child("ChunkManager", true, false)
+	if chunk_mgr and "active_chunks" in chunk_mgr:
+		for chunk in chunk_mgr.active_chunks.values():
+			if is_instance_valid(chunk) and chunk.has_method("get_grass_mesh"):
+				var m = chunk.get_grass_mesh()
+				if m:
+					glowing_grass.mesh = m
+					return
+					
+	# Fallback single blade procedural mesh
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var height = 0.2; var base_width = 0.02; var tip_width = 0.002
+	var v0 = Vector3(-base_width, 0, 0); var v1 = Vector3(base_width, 0, 0)
+	var v2 = Vector3(tip_width, 0, height); var v3 = Vector3(-tip_width, 0, height)
+	st.set_uv(Vector2(0, 1)); st.add_vertex(v0); st.set_uv(Vector2(1, 1)); st.add_vertex(v1)
+	st.set_uv(Vector2(1, 0)); st.add_vertex(v2); st.set_uv(Vector2(0, 0)); st.add_vertex(v3)
+	st.add_index(0); st.add_index(1); st.add_index(3); st.add_index(1); st.add_index(2); st.add_index(3)
+	st.generate_normals()
+	glowing_grass.mesh = st.commit()
+
+func _ensure_tree_mesh() -> void:
+	if not glowing_tree: return
+	if glowing_tree.mesh: return
+	
+	var chunk_mgr = get_tree().root.find_child("ChunkManager", true, false)
+	if chunk_mgr and "active_chunks" in chunk_mgr:
+		for chunk in chunk_mgr.active_chunks.values():
+			if is_instance_valid(chunk) and chunk.has_method("get_tree_mesh"):
+				var m = chunk.get_tree_mesh()
+				if m:
+					glowing_tree.mesh = m
+					break
+					
+	if not glowing_tree.mesh:
+		var c = load("res://Chunk.tscn").instantiate()
+		glowing_tree.mesh = c._create_tree_mesh()
+		c.queue_free()
+		
+	# Surface 0 = Trunk (Golden/Amber glow)
+	var trunk_mat = StandardMaterial3D.new()
+	trunk_mat.albedo_color = Color(1.0, 0.7, 0.2)
+	trunk_mat.emission_enabled = true
+	trunk_mat.emission = Color(1.0, 0.7, 0.2)
+	trunk_mat.emission_energy_multiplier = 5.0
+	glowing_tree.set_surface_override_material(0, trunk_mat)
+	
+	# Surface 1 = Foliage (Vibrant Emerald glow)
+	var foliage_mat = StandardMaterial3D.new()
+	foliage_mat.albedo_color = Color(0.2, 1.0, 0.45)
+	foliage_mat.emission_enabled = true
+	foliage_mat.emission = Color(0.2, 1.0, 0.45)
+	foliage_mat.emission_energy_multiplier = 6.0
+	glowing_tree.set_surface_override_material(1, foliage_mat)
+
+func _activate_glowing_grass() -> void:
+	_ensure_grass_mesh()
+	if not glowing_grass: return
+	
+	var player_pos = player.global_position if player else initial_player_spawn
+	var chosen_xform = Transform3D()
+	var found = false
+	
+	var chunk_mgr = get_tree().root.find_child("ChunkManager", true, false)
+	if chunk_mgr and "active_chunks" in chunk_mgr:
+		for chunk in chunk_mgr.active_chunks.values():
+			if not is_instance_valid(chunk): continue
+			var grass_list = chunk.get_grass_transforms() if chunk.has_method("get_grass_transforms") else []
+			for t in grass_list:
+				var world_t = chunk.global_transform * t
+				var dist = player_pos.distance_to(world_t.origin)
+				if dist >= 3.0 and dist <= 6.5:
+					chosen_xform = world_t
+					found = true
+					break
+			if found: break
+			
+	if not found:
+		var forward = -player.global_transform.basis.z.normalized() if player else Vector3.FORWARD
+		var target_pt = player_pos + forward * 3.8
+		chosen_xform = Transform3D(Basis.IDENTITY, target_pt)
+		
+	glowing_grass.global_transform = chosen_xform
+	var base_sc = chosen_xform.basis.get_scale()
+	if base_sc.length_squared() < 0.2:
+		base_sc = Vector3.ONE * 2.0
+	glowing_grass_base_scale = base_sc * 1.5
+	glowing_grass.scale = glowing_grass_base_scale
+	glowing_grass.visible = true
+	milestones[1]["pos"] = glowing_grass.global_position
+	milestones[2]["pos"] = glowing_grass.global_position
+
+func _activate_glowing_tree() -> void:
+	_ensure_tree_mesh()
+	if not glowing_tree: return
+	
+	var player_pos = player.global_position if player else initial_player_spawn
+	var chosen_xform = Transform3D()
+	var found = false
+	var best_dist = 9999.0
+	
+	var chunk_mgr = get_tree().root.find_child("ChunkManager", true, false)
+	if chunk_mgr and "active_chunks" in chunk_mgr:
+		for chunk in chunk_mgr.active_chunks.values():
+			if not is_instance_valid(chunk): continue
+			var tree_list = chunk.get_tree_transforms() if chunk.has_method("get_tree_transforms") else []
+			for t in tree_list:
+				var world_t = chunk.global_transform * t
+				var dist = player_pos.distance_to(world_t.origin)
+				if dist >= 7.0 and dist <= 38.0 and dist < best_dist:
+					best_dist = dist
+					chosen_xform = world_t
+					found = true
+					
+	if not found:
+		var forward = -player.global_transform.basis.z.normalized() if player else Vector3.FORWARD
+		var target_pt = player_pos + forward * 14.0
+		chosen_xform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 2.0), target_pt)
+		
+	glowing_tree.global_transform = chosen_xform
+	glowing_tree_base_scale = chosen_xform.basis.get_scale()
+	if glowing_tree_base_scale.length_squared() < 0.2:
+		glowing_tree_base_scale = Vector3.ONE * 2.0
+	glowing_tree.scale = glowing_tree_base_scale
+	glowing_tree.visible = true
+	milestones[3]["pos"] = glowing_tree.global_position
+
 # =============================================================================
 # --- MILESTONES DATA DEFINITIONS (UNITS I TO V) ---
 # =============================================================================
@@ -177,20 +422,20 @@ func _init_milestones_data() -> void:
 		"unit": "UNIT I: INTRODUCTION TO COMPUTER GRAPHICS",
 		"unit_tag": "UNIT I: PRIMITIVES",
 		"concept_title": "TRIANGULAR MESH GENERATION",
-		"title": "Milestone 1: Discover the Grass",
-		"pos": Vector3(3.0, 44.5, 3.0),
+		"title": "Milestone 1: Discover the Grass Blade",
+		"pos": Vector3(3.5, 44.5, 3.5),
 		"color": Color(0.0, 0.9, 1.0), # Cyan
-		"target_name": "Procedural Grass Blade Mesh",
-		"dialogue": "Look around you! Those thousands of grass blades are not imported 3D models. Each blade is procedurally synthesized from vertices and triangles using SurfaceTool.",
-		"action": "Walk towards the glowing cyan grass patch.",
+		"target_name": "Individual Glowing Grass Blade",
+		"dialogue": "Look closely at the field! Those thousands of grass blades are not imported models. Each individual blade is synthesized from vertices and triangles using SurfaceTool.",
+		"action": "Walk towards the glowing cyan individual grass blade.",
 		"code_file": "Chunk.gd",
 		"code_func": "_create_grass_blade_mesh()",
 		"impl_type": "Implemented Directly (SurfaceTool Mesh.PRIMITIVE_TRIANGLES)",
 		"math_text": "[b]Grass Geometry Parameters:[/b]\nBase Width = 0.04m, Tip Width = 0.004m, Height = 0.2m\n\n[b]Indexed Triangles:[/b]\nT₁ = (V₀, V₁, V₃)\nT₂ = (V₁, V₂, V₃)",
 		"diagram_text": "[code]     V3 (-0.002, 0.2) --- V2 (0.002, 0.2)\n     |   \\              / |\n     |     \\    T2    /   |\n     |  T1   \\      /     |\n     V0 (-0.02, 0) ------ V1 (0.02, 0)[/code]",
 		"vars_text": "• [b]V₀, V₁[/b]: Base vertices (UV.y = 1.0, planted on ground)\n• [b]V₂, V₃[/b]: Tip vertices (UV.y = 0.0, sway endpoint)\n• [b]T₁, T₂[/b]: 2 counter-clockwise triangles forming 1 blade",
-		"completion_type": "proximity",
-		"status": "Approach the highlighted grass"
+		"completion_type": "grass_blade",
+		"status": "Approach the glowing grass blade"
 	}
 	
 	milestones[2] = {
@@ -198,11 +443,11 @@ func _init_milestones_data() -> void:
 		"unit_tag": "UNIT I: SHADERS",
 		"concept_title": "VERTEX SHADER WIND DEFORMATION",
 		"title": "Milestone 2: Experience Grass Animation",
-		"pos": Vector3(3.0, 44.5, 3.0),
+		"pos": Vector3(3.5, 44.5, 3.5),
 		"color": Color(0.1, 1.0, 0.6), # Mint green
-		"target_name": "Animated Grass Field",
+		"target_name": "Animated Grass Blade",
 		"dialogue": "Notice how the grass blades sway realistically in the wind! This movement is computed entirely on the GPU via a vertex shader deformer, leaving the CPU completely free.",
-		"action": "Stand near the grass and observe the GPU wind displacement for a few seconds.",
+		"action": "Stand near the glowing grass blade and observe the GPU wind displacement for a few seconds.",
 		"code_file": "grass.gdshader",
 		"code_func": "void vertex()",
 		"impl_type": "Implemented Directly (GLSL Spatial Vertex Shader)",
@@ -220,17 +465,17 @@ func _init_milestones_data() -> void:
 		"title": "Milestone 3: Discover the Tree",
 		"pos": Vector3(5.0, 44.5, -6.0),
 		"color": Color(0.2, 0.8, 1.0), # Cyan-blue
-		"target_name": "Procedural Tree & Beacon",
+		"target_name": "Glowing Procedural Tree",
 		"dialogue": "Look at the procedural trees dotting the landscape. Each tree is formed by combining distinct 3D cuboid primitives for trunk and foliage, submitted as separate sub-mesh surfaces.",
-		"action": "Walk towards the highlighted procedural tree.",
+		"action": "Walk towards the fully glowing procedural tree.",
 		"code_file": "Chunk.gd",
 		"code_func": "_create_tree_mesh()",
 		"impl_type": "Implemented Directly (st_trunk + st_leaves SurfaceTools)",
 		"math_text": "[b]Polygonal Box Assembly:[/b]\nV = {v₁, v₂, ..., v₈} per cuboid component\n6 Quad Faces × 2 Triangles = 12 Triangles per Box\n\n[b]Dimensions:[/b]\nTrunk: 0.3m × 1.5m × 0.3m  (Surface 0 - Wood Material)\nFoliage: 1.4m × 1.2m × 1.4m (Surface 1 - Leaves Material)",
 		"diagram_text": "[code]     +-------------+   <- Foliage Box (Green)\n    /             /|      SurfaceTool st_leaves\n   +-------------+ |      12 Triangles\n   |             | +\n   +-------------+\n        |   |          <- Trunk Box (Brown)\n        |   |             SurfaceTool st_trunk\n        +---+             12 Triangles[/code]",
 		"vars_text": "• [b]SurfaceTool[/b]: Generates indexed vertex arrays & normals\n• [b]commit()[/b]: Appends multiple surfaces to a single ArrayMesh",
-		"completion_type": "proximity",
-		"status": "Approach the procedural tree"
+		"completion_type": "tree_approach",
+		"status": "Approach the glowing tree"
 	}
 	
 	milestones[4] = {
@@ -238,11 +483,11 @@ func _init_milestones_data() -> void:
 		"unit_tag": "UNIT I: GPU BATCHING",
 		"concept_title": "GPU HARDWARE INSTANCING (MULTIMESH)",
 		"title": "Milestone 4: GPU Instancing",
-		"pos": Vector3(0.0, 45.0, -12.0),
+		"pos": Vector3(45.0, 68.0, -42.0),
 		"color": Color(1.0, 0.85, 0.2), # Gold
-		"target_name": "Terrain Overlook Point",
+		"target_name": "Distant Terrain Overlook Ridge",
 		"dialogue": "Rendering thousands of individual tree and grass nodes would choke the CPU with draw calls. Instead, SublimeGreens uses GPU Hardware Instancing via MultiMeshInstance3D.",
-		"action": "Walk to the designated overlook point to observe GPU instancing across the plains.",
+		"action": "Hike up to the distant terrain overlook ridge (approx. 65m away) to observe GPU instancing across the vast terrain.",
 		"code_file": "Chunk.gd",
 		"code_func": "generate_grass(), generate_trees()",
 		"impl_type": "Engine GPU Hardware Batching configured via GDScript",
@@ -250,7 +495,7 @@ func _init_milestones_data() -> void:
 		"diagram_text": "[code]   [Base Mesh Data] ---+---> [GPU Instance Buffer: T0] -> Instance 0\n   (4 Verts, 2 Tris)   +---> [GPU Instance Buffer: T1] -> Instance 1\n                       +---> [GPU Instance Buffer: T2] -> Instance 2\n                       +---> [GPU Instance Buffer: Tn] -> Instance n[/code]",
 		"vars_text": "• [b]MultiMesh[/b]: Modern engine replacement for display lists\n• [b]PackedFloat32Array[/b]: Direct contiguous memory buffer to VRAM",
 		"completion_type": "proximity",
-		"status": "Reach the overlook waypoint"
+		"status": "Hike to the distant overlook"
 	}
 	
 	# -------------------------------------------------------------------------
@@ -625,14 +870,25 @@ func set_milestone(idx: int) -> void:
 	if hud_objective_label:
 		hud_objective_label.text = data["title"]
 		
-	# 4. Position and Configure World Highlight Waypoint
-	if active_highlight:
-		var target_pos = data["pos"]
-		active_highlight.global_position = target_pos
-		active_highlight.set_highlight_color(data["color"])
-		active_highlight.set_label(data["target_name"])
-		active_highlight.visible = data["completion_type"] in ["proximity", "observe_near", "gizmo_interact"]
-		active_highlight.snap_to_terrain()
+	# 4. Target Configuration: Glowing Individual Targets vs Generic Waypoint Marker
+	if idx in [1, 2]:
+		_activate_glowing_grass()
+		if glowing_tree: glowing_tree.visible = false
+		if active_highlight: active_highlight.visible = false
+	elif idx == 3:
+		_activate_glowing_tree()
+		if glowing_grass: glowing_grass.visible = false
+		if active_highlight: active_highlight.visible = false
+	else:
+		if glowing_grass: glowing_grass.visible = false
+		if glowing_tree: glowing_tree.visible = false
+		if active_highlight:
+			var target_pos = data["pos"]
+			active_highlight.global_position = target_pos
+			active_highlight.set_highlight_color(data["color"])
+			active_highlight.set_label(data["target_name"])
+			active_highlight.visible = data["completion_type"] in ["proximity", "observe_near", "gizmo_interact"]
+			active_highlight.snap_to_terrain()
 		
 	# 5. Configure Transformation Demo Gizmo if in Unit III
 	if transform_gizmo:
@@ -650,25 +906,66 @@ func _process(delta: float) -> void:
 	var data = milestones[current_milestone_idx]
 	milestone_timer += delta
 	
+	# Animate individual glowing targets
+	if glowing_grass and glowing_grass.visible:
+		var grass_pulse = 1.0 + sin(milestone_timer * 5.0) * 0.12
+		glowing_grass.scale = glowing_grass_base_scale * grass_pulse
+		if glowing_grass_light:
+			glowing_grass_light.light_energy = 2.5 + sin(milestone_timer * 5.0) * 1.5
+
+	if glowing_tree and glowing_tree.visible:
+		var tree_pulse = 1.0 + sin(milestone_timer * 3.5) * 0.05
+		glowing_tree.scale = glowing_tree_base_scale * tree_pulse
+		if glowing_tree_light:
+			glowing_tree_light.light_energy = 3.5 + sin(milestone_timer * 3.5) * 1.5
+
 	# Update distance in Objective HUD
-	if player and active_highlight and active_highlight.visible:
-		var dist = player.global_position.distance_to(data["pos"])
-		if hud_distance_label:
-			hud_distance_label.text = "[ %.1fm ]" % dist
-	else:
-		if hud_distance_label:
-			hud_distance_label.text = ""
+	if hud_distance_label:
+		if font_hint_timer > 0.0:
+			font_hint_timer -= delta
+			var sign_str = "+" if _font_size_offset > 0 else ""
+			hud_distance_label.text = "[ Font: %s%d ]" % [sign_str, _font_size_offset]
+		elif player:
+			var target_pt: Vector3 = Vector3.ZERO
+			var has_target: bool = false
+			if current_milestone_idx in [1, 2] and glowing_grass and glowing_grass.visible:
+				target_pt = glowing_grass.global_position
+				has_target = true
+			elif current_milestone_idx == 3 and glowing_tree and glowing_tree.visible:
+				target_pt = glowing_tree.global_position
+				has_target = true
+			elif active_highlight and active_highlight.visible:
+				target_pt = data["pos"]
+				has_target = true
+				
+			if has_target:
+				var dist = player.global_position.distance_to(target_pt)
+				hud_distance_label.text = "[ %.1fm ]" % dist
+			else:
+				hud_distance_label.text = ""
 			
 	# Process Milestone Specific Completion Conditions
 	match data["completion_type"]:
+		"grass_blade":
+			if player and glowing_grass and glowing_grass.visible:
+				var dist = player.global_position.distance_to(glowing_grass.global_position)
+				if dist < 2.5:
+					_complete_current_milestone()
+
 		"observe_near":
-			# Milestone 2: Stand near grass and observe sway for 3.5 seconds
-			if player and player.global_position.distance_to(data["pos"]) < 6.0:
+			var g_pos = glowing_grass.global_position if (glowing_grass and glowing_grass.visible) else data["pos"]
+			if player and player.global_position.distance_to(g_pos) < 5.0:
 				walk_time_tracker += delta
 				if formula_panel:
 					formula_panel.set_progress(walk_time_tracker / 3.5)
 					formula_panel.set_status("Observing Shader Deformation... (%d%%)" % int((walk_time_tracker / 3.5) * 100), Color(0.2, 1.0, 0.5))
 				if walk_time_tracker >= 3.5:
+					_complete_current_milestone()
+
+		"tree_approach":
+			if player and glowing_tree and glowing_tree.visible:
+				var dist = player.global_position.distance_to(glowing_tree.global_position)
+				if dist < 5.0:
 					_complete_current_milestone()
 					
 		"mouse_look":
@@ -785,6 +1082,23 @@ func _on_transform_demo_interacted() -> void:
 	# Interaction started
 	pass
 
+func _input(event: InputEvent) -> void:
+	# Ctrl + / Ctrl - to adjust font sizes across the UI
+	if event is InputEventKey and event.is_pressed() and not event.echo:
+		if event.ctrl_pressed:
+			if event.keycode == KEY_EQUAL or event.keycode == KEY_PLUS or event.keycode == KEY_KP_ADD:
+				_adjust_font_size(1)
+				get_viewport().set_input_as_handled()
+				return
+			elif event.keycode == KEY_MINUS or event.keycode == KEY_KP_SUBTRACT:
+				_adjust_font_size(-1)
+				get_viewport().set_input_as_handled()
+				return
+			elif event.keycode == KEY_0 or event.keycode == KEY_KP_0:
+				_adjust_font_size(0, true)
+				get_viewport().set_input_as_handled()
+				return
+
 func _unhandled_input(event: InputEvent) -> void:
 	# Milestone 7 check: opening QuizUI with E
 	if current_milestone_idx == 7 and event is InputEventKey and event.pressed and not event.echo:
@@ -818,6 +1132,10 @@ func _finish_all_milestones() -> void:
 		explanation_label.text = "Outstanding work, Explorer! You have explored and experienced all core concepts across CGVR Units I through V: Primitives, Shaders, Input/Output, Transformations, 3D Viewing, and VR Modelling!"
 	if action_box_label:
 		action_box_label.text = "Press 'T' anytime to replay or select any Unit from the dropdown menu to revisit specific concepts."
+	if glowing_grass:
+		glowing_grass.visible = false
+	if glowing_tree:
+		glowing_tree.visible = false
 	if active_highlight:
 		active_highlight.visible = false
 

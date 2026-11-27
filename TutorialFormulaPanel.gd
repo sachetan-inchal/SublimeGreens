@@ -12,8 +12,15 @@ class_name TutorialFormulaPanel
 @onready var implementation_type_label: Label = find_child("TypeLabel", true, false)
 @onready var status_label: Label = find_child("StatusLabel", true, false)
 @onready var status_bar: ProgressBar = find_child("ProgressBar", true, false)
+@onready var resize_handle: Control = find_child("ResizeHandle", true, false)
+@onready var widen_btn: Button = find_child("WidenBtn", true, false)
+@onready var narrow_btn: Button = find_child("NarrowBtn", true, false)
 
 var transition_tween: Tween
+var is_resizing: bool = false
+var current_width: float = 328.0
+const MIN_WIDTH: float = 240.0
+const MAX_WIDTH: float = 720.0
 
 func _ready() -> void:
 	_resolve_nodes()
@@ -21,6 +28,37 @@ func _ready() -> void:
 		panel_container.modulate.a = 0.0
 	if status_bar:
 		status_bar.visible = false
+	_setup_resize()
+
+func _setup_resize() -> void:
+	if widen_btn:
+		widen_btn.pressed.connect(func(): set_panel_width(current_width + 50.0))
+	if narrow_btn:
+		narrow_btn.pressed.connect(func(): set_panel_width(current_width - 50.0))
+	if resize_handle:
+		resize_handle.gui_input.connect(_on_resize_handle_gui_input)
+
+func _on_resize_handle_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			is_resizing = event.pressed
+	elif event is InputEventMouseMotion and is_resizing:
+		var vp_width = get_viewport_rect().size.x
+		var new_w = vp_width - event.global_position.x - 12.0
+		set_panel_width(new_w)
+
+func _input(event: InputEvent) -> void:
+	if is_resizing:
+		if event is InputEventMouseButton and not event.pressed:
+			is_resizing = false
+		elif event is InputEventMouseMotion:
+			var vp_width = get_viewport_rect().size.x
+			var new_w = vp_width - event.global_position.x - 12.0
+			set_panel_width(new_w)
+
+func set_panel_width(w: float) -> void:
+	current_width = clamp(w, MIN_WIDTH, MAX_WIDTH)
+	offset_left = -(current_width + 12.0)
 
 func _resolve_nodes() -> void:
 	if not panel_container: panel_container = find_child("PanelContainer", true, false)
