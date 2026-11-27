@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://d0grl6tdrab08"]
+[gd_scene load_steps=13 format=3 uid="uid://d0grl6tdrab08"]
 
 [ext_resource type="Script" uid="uid://64ee4kogyt82" path="res://ChunkManager.gd" id="1_glv2v"]
 [ext_resource type="PackedScene" uid="uid://cwhpy8mwx2xao" path="res://Chunk.tscn" id="2_r0du0"]
@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://c6j4wqp8xlye2" path="res://NarrativeTutorial.tscn" id="4_tut"]
 [ext_resource type="PackedScene" uid="uid://b82e4f0y6w11q" path="res://QuizUI.tscn" id="5_quizui"]
 [ext_resource type="PackedScene" uid="uid://c6j2kqlb7i8xm" path="res://MilestoneMarker.tscn" id="6_marker"]
+[ext_resource type="PackedScene" uid="uid://b0kwhmqhatphy" path="res://FinalQuizUI.tscn" id="7_finalquiz"]
+[ext_resource type="PackedScene" uid="uid://dpduuj6q6g8qg" path="res://AncientStoneMonolith.tscn" id="8_monolith"]
+[ext_resource type="PackedScene" path="res://OrthographicMinimapUI.tscn" id="9_minimap"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r0du0"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -48,6 +51,13 @@ sun_light = NodePath("../DirectionalLight3D")
 
 [node name="QuizUI" parent="." instance=ExtResource("5_quizui")]
 
+[node name="FinalQuizUI" parent="." instance=ExtResource("7_finalquiz")]
+
+[node name="AncientStoneMonolith" parent="." instance=ExtResource("8_monolith")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 44.5, 30)
+
+[node name="OrthographicMinimapUI" parent="." instance=ExtResource("9_minimap")]
+
 [node name="Milestones" type="Node3D" parent="."]
 
 [node name="Milestone_Trees" parent="Milestones" instance=ExtResource("6_marker")]
@@ -70,3 +80,21 @@ syllabus_unit = "Unit I & Unit III: Batching (Display Lists) & 3D Affine Transfo
 question = "Why does MultiMesh pack a 3x4 transform matrix buffer per instance rather than spawning distinct SceneTree nodes for each tree and grass blade?"
 options = Array[String](["A) It enables GPU hardware instancing, issuing a single draw call with per-instance transform matrices passed to the vertex shader.", "B) Godot cannot handle more than 10 scene nodes in a tree.", "C) It removes the need for vertex shaders entirely.", "D) MultiMesh disables all depth testing to double frame rates."])
 explanation = "Hardware instancing sends instance transformation matrices in a buffer to the GPU, drawing thousands of duplicates in one single draw call with minimal CPU overhead."
+
+[node name="Milestone_Camera" parent="Milestones" instance=ExtResource("6_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 44.5, 15)
+milestone_id = "m2_camera"
+title = "Milestone 4: Camera Hierarchy & Pitch Clamping"
+syllabus_unit = "Unit II & Unit IV: Event-Driven Input & 3-D Viewing Coordinate Systems"
+question = "In Player.gd, why is the camera attached under a dedicated Node3D pivot and clamped between -90° and +45°?"
+options = Array[String](["A) Clamping the elevation pitch prevents gimbal lock, inversion, and preserves the viewing coordinate reference frame.", "B) Godot cameras crash if pitch exceeds 90 degrees.", "C) To restrict network bandwidth in multiplayer VR sessions.", "D) To force orthographic parallel projection instead of perspective projection."])
+explanation = "Separating yaw on the player body and clamping pitch on the pivot prevents Euler gimbal lock and avoids disorienting viewport inversion in 3D/VR viewing."
+
+[node name="Milestone_LOD" parent="Milestones" instance=ExtResource("6_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 44.5, 20)
+milestone_id = "m4_aabb_lod"
+title = "Milestone 5: AABB Distance & Visible Surface LOD"
+syllabus_unit = "Unit IV & Unit V: 3-D Bounding Volumes, Culling & VR Level of Detail"
+question = "Why does ChunkManager check Euclidean distance and AABB overlap before loading or generating chunk geometry?"
+options = Array[String](["A) It implements Level-of-Detail (LOD) and view volume culling, avoiding unnecessary GPU rasterization of off-screen/far terrain.", "B) Godot requires all chunks to be square to compile shaders.", "C) Distance checks are only used to trigger audio footsteps.", "D) To convert 3D coordinates into 2D screen coordinates before the vertex stage."])
+explanation = "Bounding-volume checks and distance thresholds allow visible surface detection and spatial LOD culling, preventing GPU overdraw outside the active view volume."

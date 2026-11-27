@@ -1,0 +1,350 @@
+[gd_scene load_steps=8 format=3 uid="uid://b0kwhmqhatphy"]
+
+[ext_resource type="Script" path="res://FinalQuizUI.gd" id="1_finalquiz"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mystical_panel"]
+bg_color = Color(0.04, 0.05, 0.1, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.95, 1, 0.9)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.1, 0.8, 1, 0.35)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mystical_btn_start"]
+bg_color = Color(0.08, 0.28, 0.42, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.95, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.1, 0.8, 1, 0.25)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mystical_btn_later"]
+bg_color = Color(0.08, 0.1, 0.16, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.55, 0.7, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pbar_bg"]
+bg_color = Color(0.05, 0.07, 0.14, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.5, 0.7, 0.5)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pbar_fill"]
+bg_color = Color(0.15, 0.9, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_feedback"]
+bg_color = Color(0.06, 0.08, 0.15, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.7, 0.9, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="FinalQuizUI" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_finalquiz")
+
+[node name="InvitationRoot" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -200.0
+offset_right = 340.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GlowPanel" type="PanelContainer" parent="InvitationRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mystical_panel")
+
+[node name="VBox" type="VBoxContainer" parent="InvitationRoot/GlowPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RuneTop" type="Label" parent="InvitationRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 0.7)
+theme_override_font_sizes/font_size = 14
+text = "᚛ ᚛ ᚛  ANCIENT TRIAL OF KNOWLEDGE  ᚜ ᚜ ᚜"
+horizontal_alignment = 1
+
+[node name="InvTitle" type="Label" parent="InvitationRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 21
+text = "✧ You've unlocked the 5 CGVR Arcana! ✧"
+horizontal_alignment = 1
+
+[node name="InvDesc" type="Label" parent="InvitationRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.98, 1)
+theme_override_font_sizes/font_size = 14
+text = "The Ancient Stone Monolith hums with procedural energy. Are you ready to prove your mastery across all Computer Graphics & Virtual Reality dimensions?"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ControlsHint" type="Label" parent="InvitationRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "[ Keyboard: Press Y or Enter to Begin | N for Later ]"
+horizontal_alignment = 1
+
+[node name="BtnRow" type="HBoxContainer" parent="InvitationRoot/GlowPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="StartBtn" type="Button" parent="InvitationRoot/GlowPanel/VBox/BtnRow"]
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_mystical_btn_start")
+text = "✧ YES, LET'S GO! [Y] ✧"
+
+[node name="LaterBtn" type="Button" parent="InvitationRoot/GlowPanel/VBox/BtnRow"]
+custom_minimum_size = Vector2(160, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.8, 0.88, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_mystical_btn_later")
+text = "MAYBE LATER [N]"
+
+[node name="QuizRoot" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -460.0
+offset_right = 360.0
+offset_bottom = 460.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GlowPanel" type="PanelContainer" parent="QuizRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mystical_panel")
+
+[node name="VBox" type="VBoxContainer" parent="QuizRoot/GlowPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="QuizRoot/GlowPanel/VBox"]
+layout_mode = 2
+
+[node name="QuizTitle" type="Label" parent="QuizRoot/GlowPanel/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.25, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "✧ CGVR Final Assessment ✧"
+
+[node name="UnitBadge" type="Label" parent="QuizRoot/GlowPanel/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_font_sizes/font_size = 13
+text = "Unit I"
+horizontal_alignment = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="QuizRoot/GlowPanel/VBox"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_pbar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_pbar_fill")
+show_percentage = false
+
+[node name="ProgressLbl" type="Label" parent="QuizRoot/GlowPanel/VBox/ProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 11
+text = "Question 1 / 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuestionLbl" type="Label" parent="QuizRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Question statement here..."
+autowrap_mode = 2
+
+[node name="OptionsVBox" type="VBoxContainer" parent="QuizRoot/GlowPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="FeedbackPanel" type="PanelContainer" parent="QuizRoot/GlowPanel/VBox"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_feedback")
+
+[node name="Margin" type="MarginContainer" parent="QuizRoot/GlowPanel/VBox/FeedbackPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="FeedbackLbl" type="Label" parent="QuizRoot/GlowPanel/VBox/FeedbackPanel/Margin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Feedback text..."
+autowrap_mode = 2
+
+[node name="Footer" type="HBoxContainer" parent="QuizRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="QuitBtn" type="Button" parent="QuizRoot/GlowPanel/VBox/Footer"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_mystical_btn_later")
+text = "Close [Esc]"
+
+[node name="Spacer" type="Control" parent="QuizRoot/GlowPanel/VBox/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NextBtn" type="Button" parent="QuizRoot/GlowPanel/VBox/Footer"]
+visible = false
+custom_minimum_size = Vector2(180, 36)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_mystical_btn_start")
+text = "Next  →  [Space]"
+
+[node name="ResultsRoot" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -280.0
+offset_right = 340.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GlowPanel" type="PanelContainer" parent="ResultsRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mystical_panel")
+
+[node name="VBox" type="VBoxContainer" parent="ResultsRoot/GlowPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="RuneHeader" type="Label" parent="ResultsRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 0.7)
+theme_override_font_sizes/font_size = 13
+text = "᚛ ᚛ ᚛  THE ORACLE HAS JUDGED  ᚜ ᚜ ᚜"
+horizontal_alignment = 1
+
+[node name="ScoreLbl" type="Label" parent="ResultsRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "Score: 20 / 20  (100%)"
+horizontal_alignment = 1
+
+[node name="GradeLbl" type="Label" parent="ResultsRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "🏆  Outstanding — O"
+horizontal_alignment = 1
+
+[node name="UnitPerfLbl" type="Label" parent="ResultsRoot/GlowPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.82, 0.9, 0.96, 1)
+theme_override_font_sizes/font_size = 13
+text = "── Unit Performance ──
+Unit I: 4 / 4
+Unit II: 3 / 3
+Unit III: 4 / 4
+Unit IV: 4 / 4
+Unit V: 5 / 5"
+horizontal_alignment = 1
+
+[node name="BtnRow" type="HBoxContainer" parent="ResultsRoot/GlowPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="RetakeBtn" type="Button" parent="ResultsRoot/GlowPanel/VBox/BtnRow"]
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_mystical_btn_start")
+text = "Retake [R]"
+
+[node name="CloseBtn" type="Button" parent="ResultsRoot/GlowPanel/VBox/BtnRow"]
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_mystical_btn_later")
+text = "Explore [Space]"

@@ -1,81 +1,163 @@
-[gd_scene load_steps=3 format=3 uid="uid://b82e4f0y6w11q"]
+[gd_scene load_steps=2 format=3 uid="uid://b82e4f0y6w11q"]
 
-[ext_resource type="Script" path="res://QuizUI.gd" id="1_quizui"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_panel"]
-bg_color = Color(0.0823529, 0.0980392, 0.12549, 0.98)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.32, 0.36, 0.44, 1)
+[ext_resource type="Script" uid="uid://b5m3x32014yvq" path="res://QuizUI.gd" id="1_quizui"]
 
 [node name="QuizUI" type="CanvasLayer"]
 process_mode = 3
 script = ExtResource("1_quizui")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="InvitationModal" type="PanelContainer" parent="."]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -200.0
-offset_right = 280.0
-offset_bottom = 200.0
+offset_left = -260.0
+offset_top = -140.0
+offset_right = 260.0
+offset_bottom = 140.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 14.0
-offset_right = -16.0
-offset_bottom = -14.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
+[node name="Margin" type="MarginContainer" parent="InvitationModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
+[node name="VBox" type="VBoxContainer" parent="InvitationModal/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="InvBadge" type="Label" parent="InvitationModal/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "⭐ CGVR MILESTONE DISCOVERED"
+horizontal_alignment = 1
+
+[node name="InvTitle" type="Label" parent="InvitationModal/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "Milestone Title"
+horizontal_alignment = 1
+
+[node name="InvDesc" type="Label" parent="InvitationModal/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-text = "Milestone: Concept Name"
+text = "You have discovered a syllabus milestone! Would you like to test your understanding with verified exam questions?"
+autowrap_mode = 3
 horizontal_alignment = 1
 
-[node name="SyllabusLabel" type="Label" parent="Panel/VBoxContainer"]
+[node name="HBox" type="HBoxContainer" parent="InvitationModal/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.75, 1, 1)
-theme_override_font_sizes/font_size = 10
-text = "Syllabus: Unit ..."
-horizontal_alignment = 1
+theme_override_constants/separation = 20
+alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+[node name="StartQuizBtn" type="Button" parent="InvitationModal/Margin/VBox/HBox"]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "Yes, Let's Go!  [ E ]"
+
+[node name="CancelInvBtn" type="Button" parent="InvitationModal/Margin/VBox/HBox"]
+custom_minimum_size = Vector2(120, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Later  [ Esc ]"
+
+[node name="QuizPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -280.0
+offset_right = 380.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="QuizPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="QuizPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderHBox" type="HBoxContainer" parent="QuizPanel/Margin/VBox"]
 layout_mode = 2
 
-[node name="QuestionLabel" type="Label" parent="Panel/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="QuizPanel/Margin/VBox/HeaderHBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Question text will appear here?"
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "Milestone Title"
+
+[node name="ProgressLabel" type="Label" parent="QuizPanel/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Q 1 of 4"
+
+[node name="SyllabusLabel" type="Label" parent="QuizPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "📚 Syllabus: Unit I"
+
+[node name="HSeparator" type="HSeparator" parent="QuizPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="QuestionLabel" type="Label" parent="QuizPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Question statement will appear here..."
 autowrap_mode = 3
 
-[node name="OptionsContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+[node name="OptionsContainer" type="VBoxContainer" parent="QuizPanel/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 
-[node name="FeedbackLabel" type="Label" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 30)
+[node name="FeedbackPanel" type="PanelContainer" parent="QuizPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+
+[node name="Margin" type="MarginContainer" parent="QuizPanel/Margin/VBox/FeedbackPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="FeedbackLabel" type="Label" parent="QuizPanel/Margin/VBox/FeedbackPanel/Margin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Select an answer to view syllabus explanation."
 autowrap_mode = 3
 
-[node name="CloseButton" type="Button" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 24)
+[node name="FooterHBox" type="HBoxContainer" parent="QuizPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Close (or press E / Esc)"
+theme_override_constants/separation = 16
+
+[node name="CloseButton" type="Button" parent="QuizPanel/Margin/VBox/FooterHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Close Quiz [ Esc ]"
+
+[node name="NextButton" type="Button" parent="QuizPanel/Margin/VBox/FooterHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 1, 0.4, 1)
+text = "Next Question  →"

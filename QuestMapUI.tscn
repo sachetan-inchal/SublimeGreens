@@ -1,0 +1,156 @@
+[gd_scene load_steps=3 format=3 uid="uid://c6f376qmkm82s"]
+
+[ext_resource type="Script" uid="uid://dpsaox2r4i7s4" path="res://QuestMapUI.gd" id="1_mapui"]
+[ext_resource type="Script" uid="uid://bn76fey3h7gqm" path="res://QuestMap.gd" id="2_questmap"]
+
+[node name="QuestMapUI" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_mapui")
+
+[node name="MinimapContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -240.0
+offset_right = 244.0
+offset_bottom = -20.0
+grow_vertical = 0
+
+[node name="QuestMap" type="Control" parent="MinimapContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_questmap")
+
+[node name="ObjectivePanel" type="PanelContainer" parent="MinimapContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -54.0
+offset_bottom = -6.0
+grow_horizontal = 2
+
+[node name="Margin" type="MarginContainer" parent="MinimapContainer/ObjectivePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="MinimapContainer/ObjectivePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="MinimapContainer/ObjectivePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 11
+text = "Unit I: Procedural Cuboid Tree"
+text_overrun_behavior = 3
+
+[node name="DistLabel" type="Label" parent="MinimapContainer/ObjectivePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "🎯 Objective: 24.5 m"
+
+[node name="ExpandedMapModal" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -280.0
+offset_right = 460.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="ExpandedMapModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="HBox" type="HBoxContainer" parent="ExpandedMapModal/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Sidebar" type="VBoxContainer" parent="ExpandedMapModal/Margin/HBox"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "CGVR TREASURE HUNT"
+
+[node name="SubHeader" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Click a checkpoint to set as active destination"
+
+[node name="HSeparator" type="HSeparator" parent="ExpandedMapModal/Margin/HBox/Sidebar"]
+layout_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="ExpandedMapModal/Margin/HBox/Sidebar"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QuestList" type="VBoxContainer" parent="ExpandedMapModal/Margin/HBox/Sidebar/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Legend" type="VBoxContainer" parent="ExpandedMapModal/Margin/HBox/Sidebar"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Leg1" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar/Legend"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🟡 Gold: Available Quest"
+
+[node name="Leg2" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar/Legend"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 0.25, 1)
+theme_override_font_sizes/font_size = 10
+text = "🟢 Green: Completed Quest"
+
+[node name="Leg3" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar/Legend"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.55, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "⚪ Grey: Locked Quest"
+
+[node name="Leg4" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar/Legend"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.2, 0.95, 1)
+theme_override_font_sizes/font_size = 10
+text = "🟣 Purple: Bonus Treasure"
+
+[node name="Leg5" type="Label" parent="ExpandedMapModal/Margin/HBox/Sidebar/Legend"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔷 Cyan Arrow: Player Location"
+
+[node name="CloseButton" type="Button" parent="ExpandedMapModal/Margin/HBox/Sidebar"]
+layout_mode = 2
+text = "Close Map [ M / Esc ]"
+
+[node name="MapCanvas" type="Control" parent="ExpandedMapModal/Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

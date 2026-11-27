@@ -167,7 +167,7 @@ func _setup_ui_events() -> void:
 	if prev_button:
 		prev_button.pressed.connect(func(): set_milestone(current_milestone_idx - 1))
 	if next_button:
-		next_button.pressed.connect(func(): set_milestone(current_milestone_idx + 1))
+		next_button.pressed.connect(_on_next_button_pressed)
 	if mouse_mode_btn:
 		mouse_mode_btn.pressed.connect(_on_mouse_mode_btn_pressed)
 		_update_mouse_mode_ui()
@@ -1122,22 +1122,44 @@ func _complete_current_milestone() -> void:
 		set_milestone(current_milestone_idx + 1)
 	)
 
+func _on_next_button_pressed() -> void:
+	if current_milestone_idx >= 19:
+		_finish_all_milestones()
+	else:
+		set_milestone(current_milestone_idx + 1)
+
 func _finish_all_milestones() -> void:
 	is_active = false
+	emit_signal("tutorial_completed")
+	
+	# Hide all narrative and tutorial overlay panels across the screen
+	if left_panel:
+		left_panel.visible = false
 	if formula_panel:
-		formula_panel.set_status("CONGRATULATIONS! ALL 5 UNITS COMPLETED 🎉", Color(1.0, 0.85, 0.2))
-	if concept_title:
-		concept_title.text = "CGVR LEARNING JOURNEY COMPLETED"
-	if explanation_label:
-		explanation_label.text = "Outstanding work, Explorer! You have explored and experienced all core concepts across CGVR Units I through V: Primitives, Shaders, Input/Output, Transformations, 3D Viewing, and VR Modelling!"
-	if action_box_label:
-		action_box_label.text = "Press 'T' anytime to replay or select any Unit from the dropdown menu to revisit specific concepts."
+		formula_panel.visible = false
+	if objective_hud:
+		objective_hud.visible = false
+	if active_highlight:
+		active_highlight.visible = false
+	if transform_gizmo:
+		transform_gizmo.visible = false
 	if glowing_grass:
 		glowing_grass.visible = false
 	if glowing_tree:
 		glowing_tree.visible = false
-	if active_highlight:
-		active_highlight.visible = false
+
+	# Mark all core unit quests complete in QuestLocationManager
+	var qlm = QuestLocationManager.instance
+	if not qlm:
+		qlm = get_tree().root.find_child("QuestLocationManager", true, false)
+	if qlm:
+		for qid in ["m1_trees", "m3_terrain", "m5_multimesh", "m2_camera", "m4_aabb_lod"]:
+			qlm.set_quest_status(qid, QuestMarker.QuestStatus.COMPLETED)
+
+	# Trigger Ancient Stone Monolith magical screen and set minimap destination
+	var monolith = get_tree().root.find_child("AncientStoneMonolith", true, false)
+	if monolith and monolith.has_method("activate_magical_screen"):
+		monolith.activate_magical_screen()
 
 func _display_dialogue(text: String) -> void:
 	if dialogue_tween and dialogue_tween.is_valid():

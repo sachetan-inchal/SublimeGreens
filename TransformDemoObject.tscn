@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c3f0b2r8n9m4q"]
+[gd_scene load_steps=12 format=3 uid="uid://c3f0b2r8oam4q"]
 
 [ext_resource type="Script" path="res://TransformDemoObject.gd" id="1_td8x"]
 

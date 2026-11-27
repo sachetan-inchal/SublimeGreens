@@ -12,7 +12,10 @@ func _ready():
 
 func _input(event):
 	var quiz_ui = get_tree().root.find_child("QuizUI", true, false)
-	if quiz_ui and quiz_ui.is_quiz_open:
+	if quiz_ui and (quiz_ui.is_quiz_open or quiz_ui.is_invitation_open):
+		return
+	var final_quiz = get_tree().root.find_child("FinalQuizUI", true, false)
+	if final_quiz and final_quiz.is_active:
 		return
 
 	# Toggle mouse mode between Look (Captured) and Cursor (Visible)
@@ -36,7 +39,9 @@ func toggle_mouse_mode() -> void:
 		
 func _physics_process(delta: float) -> void:
 	var quiz_ui = get_tree().root.find_child("QuizUI", true, false)
-	if quiz_ui and quiz_ui.is_quiz_open:
+	var final_quiz = get_tree().root.find_child("FinalQuizUI", true, false)
+	var is_blocked = (quiz_ui and (quiz_ui.is_quiz_open or quiz_ui.is_invitation_open)) or (final_quiz and final_quiz.is_active)
+	if is_blocked:
 		velocity.x = 0
 		velocity.z = 0
 		if not is_on_floor():
